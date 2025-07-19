@@ -226,144 +226,6 @@
     #main-content.show {
       transform: scale(1);
     }
-    .hotrank-page {
-      display: none;
-      position: fixed;
-      left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(20,20,20,0.98);
-      z-index: 10000;
-      color: #fff;
-      font-family: 'Segoe UI', 'Arial', sans-serif;
-      overflow-y: auto;
-    }
-    .hotrank-header {
-      display: flex;
-      align-items: center;
-      padding: 32px 32px 0 32px;
-    }
-    .hotrank-icon {
-      width: 48px; height: 48px;
-      background: #ff3d00;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2rem;
-      margin-right: 18px;
-    }
-    .hotrank-title-block {
-      display: flex; flex-direction: column;
-    }
-    .hotrank-title {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 2px;
-    }
-    .hotrank-subtitle {
-      font-size: 1rem;
-      color: #ccc;
-    }
-    .hotrank-datebar {
-      text-align: center;
-      margin-top: 12px;
-      margin-bottom: 18px;
-    }
-    .hotrank-date {
-      font-size: 1.1rem;
-      margin-bottom: 2px;
-    }
-    .hotrank-lunar {
-      font-size: 0.95rem;
-      color: #aaa;
-    }
-    .hotrank-actions {
-      position: absolute;
-      right: 36px; top: 36px;
-      display: flex;
-      gap: 18px;
-    }
-    .hotrank-actions button {
-      background: #232323;
-      border: none;
-      border-radius: 50%;
-      width: 38px; height: 38px;
-      color: #bbb;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .hotrank-actions button:hover {
-      background: #333;
-      color: #fff;
-    }
-    .hotrank-cards {
-      display: flex;
-      gap: 24px;
-      justify-content: center;
-      margin: 32px 0 0 0;
-      flex-wrap: wrap;
-      flex-shrink: 0;
-    }
-    .hotrank-card {
-      background: rgba(40, 40, 40, 0.45) !important;
-      backdrop-filter: blur(8px) saturate(1.2);
-      -webkit-backdrop-filter: blur(8px) saturate(1.2);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-      border-radius: 16px;
-      padding: 18px 18px 18px 18px;
-      min-width: 240px;
-      max-width: 300px;
-      flex: 1 1 240px;
-      display: flex;
-      flex-direction: column;
-    }
-    .hotrank-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .hotrank-card-title {
-      font-size: 1.1rem;
-      font-weight: bold;
-      display: flex; align-items: center;
-      gap: 6px;
-    }
-    .hotrank-card-title i {
-      font-size: 1.1rem;
-    }
-    .hotrank-card-action {
-      color: #888;
-      font-size: 1.2rem;
-      cursor: pointer;
-      border-radius: 50%;
-      padding: 2px 6px;
-      transition: background 0.2s;
-    }
-    .hotrank-card-action:hover {
-      background: #333;
-      color: #fff;
-    }
-    .hotrank-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .hotrank-list-item {
-      background: #353535;
-      border-radius: 8px;
-      height: 18px;
-      margin-bottom: 0;
-      opacity: 0.7;
-    }
-    @media (max-width: 900px) {
-      .hotrank-cards { flex-direction: column; align-items: center; }
-    }
-    .loading-content {
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
   </style>
 </head>
 <body>
@@ -381,8 +243,8 @@
           <path class="arc arc3" d="M40 70 A30 30 0 0 1 10 40" fill="none" stroke="#444" stroke-width="6" stroke-linecap="round"/>
         </svg>
       </div>
-      <div class="loading-title">Musifeiの主页</div>
-      <div class="loading-tip">主页加载中</div>
+      <div class="loading-title">主页</div>
+      <div class="loading-tip">加载中</div>
     </div>
     <div class="loading-doors">
       <div class="door left-door"></div>
@@ -407,38 +269,6 @@
   </footer>
   <div id="main-content" style="display:contents;">
     <!-- 原有主内容（background、site-header、center-content、footer等）都包裹在这里 -->
-  </div>
-  <!-- 热榜聚合页面 -->
-  <div class="hotrank-page" id="hotrankPage">
-    <div class="hotrank-header">
-      <div class="hotrank-icon"><i class="fa fa-fire"></i></div>
-      <div class="hotrank-title-block">
-        <div class="hotrank-title">今日热榜</div>
-        <div class="hotrank-subtitle">汇聚全网热点，热门尽览无余</div>
-      </div>
-    </div>
-    <div class="hotrank-datebar">
-      <div class="hotrank-date" id="hotrankDate"></div>
-      <div class="hotrank-lunar" id="hotrankLunar">农历信息</div>
-    </div>
-    <div class="hotrank-actions">
-      <button class="hotrank-back" id="hotrankBackBtn" title="返回"><i class="fa fa-arrow-left"></i></button>
-    </div>
-    <div class="hotrank-cards">
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-search"></i> 百度</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-star"></i> 少数派</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-desktop"></i> IT之家</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-newspaper-o"></i> 澎湃新闻</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-bullhorn"></i> 今日头条</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-qq"></i> 腾讯新闻</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-film"></i> 豆瓣电影</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-cloud"></i> 网易新闻</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-book"></i> 微信读书</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-users"></i> 豆瓣小组</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-calendar"></i> 知乎日报</div></div><div class="hotrank-list"></div></div>
-      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-pencil"></i> 简书</div></div><div class="hotrank-list"></div></div>
-      <!-- 原有5个平台卡片可保留或去除 -->
-    </div>
   </div>
   <script>
     // 日期和时间
@@ -504,10 +334,6 @@
         });
     }
     updateQuote();
-    // 热点汇总切换逻辑
-    const hotrankPage = document.getElementById('hotrankPage');
-    const mainContent = document.getElementById('main-content');
-    const hotrankBackBtn = document.getElementById('hotrankBackBtn');
     // 标签点击事件
     renderTags();
     function bindHotrankTagEvent() {
@@ -524,79 +350,6 @@
       });
     }
     bindHotrankTagEvent();
-    // 返回按钮
-    hotrankBackBtn.onclick = function(){
-      hotrankPage.style.display = 'none';
-      mainContent.style.display = '';
-    };
-    // 日期农历（农历可用第三方API或静态占位）
-    function updateHotrankDate(){
-      const now = new Date();
-      const week = ['日','一','二','三','四','五','六'];
-      const dateStr = now.getFullYear() + '-' +
-        String(now.getMonth()+1).padStart(2,'0') + '-' +
-        String(now.getDate()).padStart(2,'0') + ' ' +
-        now.toTimeString().slice(0,8);
-      document.getElementById('hotrankDate').textContent = dateStr;
-      // 农历可用API，这里静态占位
-      document.getElementById('hotrankLunar').textContent = '乙巳年 六月廿五 星期' + week[now.getDay()];
-    }
-    // 热点汇总API接入
-    const hotrankApis = [
-      { type: 'baidu', card: 0 },
-      { type: 'sspai', card: 1 },
-      { type: 'ithome', card: 2 },
-      { type: 'thepaper', card: 3 },
-      { type: 'toutiao', card: 4 },
-      { type: 'tencent', card: 5 },
-      { type: 'doubanMovie', card: 6 },
-      { type: 'wangyiNews', card: 7 },
-      { type: 'wxread', card: 8 },
-      { type: 'doubanGroup', card: 9 },
-      { type: 'zhihudaily', card: 10 },
-      { type: 'jianshu', card: 11 }
-    ];
-    function loadHotrankAll() {
-      hotrankApis.forEach(({type, card}) => {
-        const cardElem = document.querySelectorAll('.hotrank-card')[card];
-        const listElem = cardElem.querySelector('.hotrank-list');
-        listElem.innerHTML = '<div style="color:#888;text-align:center;padding:12px 0;">加载中...</div>';
-        fetch(`https://api.vvhan.com/api/hotlist?type=${type}`)
-          .then(res => res.json())
-          .then(data => {
-            if(data && data.success && data.data && data.data.length > 0) {
-              listElem.innerHTML = '';
-              data.data.slice(0,10).forEach(item => {
-                const a = document.createElement('a');
-                a.className = 'hotrank-list-item';
-                a.href = item.url;
-                a.target = '_blank';
-                a.title = item.title;
-                a.style.display = 'block';
-                a.style.background = '#353535';
-                a.style.borderRadius = '8px';
-                a.style.height = 'auto';
-                a.style.opacity = '1';
-                a.style.color = '#fff';
-                a.style.padding = '7px 12px';
-                a.style.marginBottom = '0';
-                a.style.textDecoration = 'none';
-                a.style.fontSize = '1rem';
-                a.style.overflow = 'hidden';
-                a.style.textOverflow = 'ellipsis';
-                a.style.whiteSpace = 'nowrap';
-                a.innerHTML = item.title;
-                listElem.appendChild(a);
-              });
-            } else {
-              listElem.innerHTML = '<div style="color:#888;text-align:center;padding:12px 0;">暂无数据</div>';
-            }
-          })
-          .catch(() => {
-            listElem.innerHTML = '<div style="color:#888;text-align:center;padding:12px 0;">获取失败</div>';
-          });
-      });
-    }
     // 动态渲染tags
     function renderTags() {
       const tags = window.siteConfig.tags;
