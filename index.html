@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>zor666.me</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 可选：引入字体和图标库 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Pacifico&display=swap" rel="stylesheet">
+  <script src="config.js"></script>
+  <style>
+    @font-face {
+      font-family: 'UniDreamLED';
+      src: url('UniDreamLED.ttf') format('truetype');
+      font-display: swap;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      color: #fff;
+      background: #222;
+      overflow: hidden;
+    }
+    body {
+      min-height: 100vh;
+      position: relative;
+      background: url('bg.jpg') no-repeat center center/cover;
+    }
+    .background {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      top: 0; left: 0;
+      filter: blur(2px) brightness(0.8);
+      z-index: -1;
+    }
+    .site-header {
+      position: absolute;
+      top: 32px;
+      left: 48px;
+      display: flex;
+      align-items: center;
+      z-index: 2;
+    }
+    .site-name {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.2rem;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 2px 8px #000;
+    }
+    .center-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 90vw;
+      max-width: 480px;
+      z-index: 1;
+    }
+    .clock {
+      font-size: 6rem;
+      font-family: 'UniDreamLED', 'Consolas', monospace;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 8px #000;
+    }
+    .date {
+      font-size: 1.3rem;
+      margin-bottom: 7px;
+      text-shadow: 0 2px 8px #000;
+    }
+    .weather {
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+      color: #eee;
+      text-shadow: 0 2px 8px #000;
+    }
+    .quote {
+      padding: 18px 24px;
+      font-size: 1.1rem;
+      font-style: italic;
+      text-align: center;
+      max-width: 100%;
+    }
+    .quote-author {
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: #ccc;
+      text-align: center;
+      min-height: 1em;
+    }
+    .social-icons {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .social-icons a {
+      color: #fff;
+      margin: 0 12px;
+      font-size: 1.2rem;
+      transition: color 0.2s;
+    }
+    .social-icons a:hover {
+      color: #ffd700;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .tag {
+      background: rgba(0,0,0,0.5);
+      border-radius: 16px;
+      padding: 8px 22px;
+      font-size: 1rem;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      border: none;
+      outline: none;
+      user-select: none;
+      -webkit-user-select: none;
+      text-decoration: none !important;
+    }
+    .tag:hover {
+      background: rgba(255,255,255,0.15);
+      transform: translateY(-2px) scale(1.04);
+    }
+    footer {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 18px;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 4px #000;
+      position: absolute;
+      width: 100vw;
+      left: 0;
+      bottom: 0;
+    }
+    @media (max-width: 700px) {
+      .site-header { left: 10px; top: 10px; }
+      .logo-img { width: 40px; height: 40px; font-size: 22px; }
+      .site-name { font-size: 1.2rem; }
+      .center-content { max-width: 98vw; }
+      .clock { font-size: 4rem; }
+      .date { font-size: 1rem; }
+      .weather { font-size: 0.95rem; }
+      .quote { font-size: 0.95rem; padding: 10px 8px; }
+      .social-icons a { font-size: 1.3rem; margin: 0 7px; }
+      .tag { font-size: 0.9rem; padding: 6px 12px; }
+    }
+    #loading-mask {
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(40,40,40,0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s;
+      overflow: hidden;
+    }
+    .loading-doors {
+      position: absolute;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .door {
+      position: absolute;
+      top: 0; width: 50vw; height: 100vh;
+      background: rgba(40,40,40,0.96);
+      transition: transform 0.7s cubic-bezier(.77,0,.18,1);
+      z-index: 2;
+    }
+    .left-door { left: 0; border-right: 1px solid #222; }
+    .right-door { right: 0; border-left: 1px solid #222; }
+
+    /* 三弧线转圈动画 */
+    .loading-spinner-arcs {
+      width: 80px; height: 80px;
+      margin: 0 auto 32px auto;
+      z-index: 3;
+      position: relative;
+    }
+    .loading-spinner-arcs svg {
+      width: 80px; height: 80px;
+      display: block;
+      animation: arcs-rotate 1.2s linear infinite;
+    }
+    @keyframes arcs-rotate {
+      100% { transform: rotate(360deg); }
+    }
+    .arc1 { stroke: #888; }
+    .arc2 { stroke: #666; }
+    .arc3 { stroke: #444; }
+
+    .loading-title {
+      font-size: 1.4rem;
+      color: #aaa;
+      margin-bottom: 8px;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      z-index: 3;
+    }
+    .loading-tip {
+      font-size: 1.1rem;
+      color: #888;
+      letter-spacing: 2px;
+      z-index: 3;
+    }
+
+    /* 主内容缩放动画 */
+    #main-content {
+      transition: transform 0.7s cubic-bezier(.77,0,.18,1);
+      transform: scale(1.08);
+    }
+    #main-content.show {
+      transform: scale(1);
+    }
+    .hotrank-page {
+      display: none;
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(20,20,20,0.98);
+      z-index: 10000;
+      color: #fff;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      overflow-y: auto;
+    }
+    .hotrank-header {
+      display: flex;
+      align-items: center;
+      padding: 32px 32px 0 32px;
+    }
+    .hotrank-icon {
+      width: 48px; height: 48px;
+      background: #ff3d00;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin-right: 18px;
+    }
+    .hotrank-title-block {
+      display: flex; flex-direction: column;
+    }
+    .hotrank-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+    .hotrank-subtitle {
+      font-size: 1rem;
+      color: #ccc;
+    }
+    .hotrank-datebar {
+      text-align: center;
+      margin-top: 12px;
+      margin-bottom: 18px;
+    }
+    .hotrank-date {
+      font-size: 1.1rem;
+      margin-bottom: 2px;
+    }
+    .hotrank-lunar {
+      font-size: 0.95rem;
+      color: #aaa;
+    }
+    .hotrank-actions {
+      position: absolute;
+      right: 36px; top: 36px;
+      display: flex;
+      gap: 18px;
+    }
+    .hotrank-actions button {
+      background: #232323;
+      border: none;
+      border-radius: 50%;
+      width: 38px; height: 38px;
+      color: #bbb;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .hotrank-actions button:hover {
+      background: #333;
+      color: #fff;
+    }
+    .hotrank-cards {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin: 32px 0 0 0;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .hotrank-card {
+      background: rgba(40, 40, 40, 0.45) !important;
+      backdrop-filter: blur(8px) saturate(1.2);
+      -webkit-backdrop-filter: blur(8px) saturate(1.2);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      border-radius: 16px;
+      padding: 18px 18px 18px 18px;
+      min-width: 240px;
+      max-width: 300px;
+      flex: 1 1 240px;
+      display: flex;
+      flex-direction: column;
+    }
+    .hotrank-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .hotrank-card-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      display: flex; align-items: center;
+      gap: 6px;
+    }
+    .hotrank-card-title i {
+      font-size: 1.1rem;
+    }
+    .hotrank-card-action {
+      color: #888;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: 50%;
+      padding: 2px 6px;
+      transition: background 0.2s;
+    }
+    .hotrank-card-action:hover {
+      background: #333;
+      color: #fff;
+    }
+    .hotrank-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .hotrank-list-item {
+      background: #353535;
+      border-radius: 8px;
+      height: 18px;
+      margin-bottom: 0;
+      opacity: 0.7;
+    }
+    @media (max-width: 900px) {
+      .hotrank-cards { flex-direction: column; align-items: center; }
+    }
+    .loading-content {
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- 加载动画层 -->
+  <div id="loading-mask">
+    <div class="loading-content">
+      <div class="loading-doors">
+        <div class="door left-door"></div>
+        <div class="door right-door"></div>
+      </div>
+      <div class="loading-spinner-arcs">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <path class="arc arc1" d="M40 10 A30 30 0 0 1 70 40" fill="none" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+          <path class="arc arc2" d="M70 40 A30 30 0 0 1 40 70" fill="none" stroke="#666" stroke-width="6" stroke-linecap="round"/>
+          <path class="arc arc3" d="M40 70 A30 30 0 0 1 10 40" fill="none" stroke="#444" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="loading-title">Musifeiの主页</div>
+      <div class="loading-tip">主页加载中</div>
+    </div>
+    <div class="loading-doors">
+      <div class="door left-door"></div>
+      <div class="door right-door"></div>
+    </div>
+  </div>
+  <div class="background"></div>
+  <div class="site-header">
+    <span class="site-name">zor666.<b>me</b></span>
+  </div>
+  <div class="center-content">
+    <div class="clock" id="clock"></div>
+    <div class="date" id="date"></div>
+    <div class="weather" id="weather"></div>
+    <div class="quote" id="quote"></div>
+    <div class="quote-author" id="quote-author"></div>
+    <div class="social-icons" id="socialIcons"></div>
+    <div class="tags" id="tags"></div>
+  </div>
+  <footer>
+    Copyright © 2024 - 2025 zor666.me
+  </footer>
+  <div id="main-content" style="display:contents;">
+    <!-- 原有主内容（background、site-header、center-content、footer等）都包裹在这里 -->
+  </div>
+  <!-- 热榜聚合页面 -->
+  <div class="hotrank-page" id="hotrankPage">
+    <div class="hotrank-header">
+      <div class="hotrank-icon"><i class="fa fa-fire"></i></div>
+      <div class="hotrank-title-block">
+        <div class="hotrank-title">今日热榜</div>
+        <div class="hotrank-subtitle">汇聚全网热点，热门尽览无余</div>
+      </div>
+    </div>
+    <div class="hotrank-datebar">
+      <div class="hotrank-date" id="hotrankDate"></div>
+      <div class="hotrank-lunar" id="hotrankLunar">农历信息</div>
+    </div>
+    <div class="hotrank-actions">
+      <button class="hotrank-back" id="hotrankBackBtn" title="返回"><i class="fa fa-arrow-left"></i></button>
+    </div>
+    <div class="hotrank-cards">
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-search"></i> 百度</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-star"></i> 少数派</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-desktop"></i> IT之家</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-newspaper-o"></i> 澎湃新闻</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-bullhorn"></i> 今日头条</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-qq"></i> 腾讯新闻</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-film"></i> 豆瓣电影</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-cloud"></i> 网易新闻</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-book"></i> 微信读书</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-users"></i> 豆瓣小组</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-calendar"></i> 知乎日报</div></div><div class="hotrank-list"></div></div>
+      <div class="hotrank-card"><div class="hotrank-card-header"><div class="hotrank-card-title"><i class="fa fa-pencil"></i> 简书</div></div><div class="hotrank-list"></div></div>
+      <!-- 原有5个平台卡片可保留或去除 -->
+    </div>
+  </div>
+  <script>
+    // 日期和时间
+    function updateTime() {
+      const now = new Date();
+      const week = ['日','一','二','三','四','五','六'];
+      const dateStr = now.getFullYear() + '年' +
+        String(now.getMonth()+1).padStart(2,'0') + '月' +
+        String(now.getDate()).padStart(2,'0') + '日 ' +
+        '星期' + week[now.getDay()];
+      document.getElementById('date').textContent = dateStr;
+      document.getElementById('clock').textContent =
+        now.toTimeString().slice(0,8);
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+    // 每日一言（可接API，这里为静态）
+    // document.getElementById('quote').textContent = '“你想要的，岁月都会给你。”';
+    window.onload = function() {
+      // 1. 隐藏loading-content（转圈和文字）
+      document.querySelector('#loading-mask .loading-content').style.display = 'none';
+      // 2. 主内容缩放动画同步开始
+      document.getElementById('main-content').classList.add('show');
+      // 3. 推门动画
+      document.querySelectorAll('#loading-mask .left-door').forEach(el => el.style.transform = 'translateX(-100vw)');
+      document.querySelectorAll('#loading-mask .right-door').forEach(el => el.style.transform = 'translateX(100vw)');
+      // 4. loading-mask 淡出
+      setTimeout(function() {
+        document.getElementById('loading-mask').style.opacity = 0;
+      }, 500);
+      setTimeout(function() {
+        document.getElementById('loading-mask').style.display = 'none';
+      }, 1200);
+    };
+    function updateWeather() {
+      fetch('https://v2.xxapi.cn/api/weather?city=%E5%AE%89%E5%BE%BD%E5%90%88%E8%82%A5%E5%8C%85%E6%B2%B3%E5%8C%BA')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.code === 200 && data.data && data.data.data && data.data.data.length > 0) {
+            const today = data.data.data[0];
+            const city = '合肥市 包河区';
+            document.getElementById('weather').textContent = `${city} ${today.weather} ${today.temperature}`;
+          }
+        })
+        .catch(() => {
+          document.getElementById('weather').textContent = '天气获取失败';
+        });
+    }
+    updateWeather();
+
+    function updateQuote() {
+      fetch('https://v1.hitokoto.cn/')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.hitokoto) {
+            document.getElementById('quote').textContent = '“' + data.hitokoto + '”';
+            document.getElementById('quote-author').textContent = data.from ? `—— ${data.from}` : '';
+          }
+        })
+        .catch(() => {
+          document.getElementById('quote').textContent = '“每日一言获取失败”';
+          document.getElementById('quote-author').textContent = '';
+        });
+    }
+    updateQuote();
+    // 热点汇总切换逻辑
+    const hotrankPage = document.getElementById('hotrankPage');
+    const mainContent = document.getElementById('main-content');
+    const hotrankBackBtn = document.getElementById('hotrankBackBtn');
+    // 标签点击事件
+    Array.from(document.getElementsByClassName('tag')).forEach(tag => {
+      if(tag.textContent.includes('热点汇总')){
+        tag.style.cursor = 'pointer';
+        tag.onclick = function(){
+          mainContent.style.display = 'none';
+          hotrankPage.style.display = 'block';
+          updateHotrankDate();
+          loadHotrankAll();
+        };
+      }
+    });
+    // 返回按钮
+    hotrankBackBtn.onclick = function(){
+      hotrankPage.style.display = 'none';
+      mainContent.style.display = '';
+    };
+    // 日期农历（农历可用第三方API或静态占位）
+    function updateHotrankDate(){
+      const now = new Date();
+      const week = ['日','一','二','三','四','五','六'];
+      const dateStr = now.getFullYear() + '-' +
+        String(now.getMonth()+1).padStart(2,'0') + '-' +
+        String(now.getDate()).padStart(2,'0') + ' ' +
+        now.toTimeString().slice(0,8);
+      document.getElementById('hotrankDate').textContent = dateStr;
+      // 农历可用API，这里静态占位
+      document.getElementById('hotrankLunar').textContent = '乙巳年 六月廿五 星期' + week[now.getDay()];
+    }
+    // 热点汇总API接入
+    const hotrankApis = [
+      { type: 'baidu', card: 0 },
+      { type: 'sspai', card: 1 },
+      { type: 'ithome', card: 2 },
+      { type: 'thepaper', card: 3 },
+      { type: 'toutiao', card: 4 },
+      { type: 'tencent', card: 5 },
+      { type: 'doubanMovie', card: 6 },
+      { type: 'wangyiNews', card: 7 },
+      { type: 'wxread', card: 8 },
+      { type: 'doubanGroup', card: 9 },
+      { type: 'zhihudaily', card: 10 },
+      { type: 'jianshu', card: 11 }
+    ];
+    function loadHotrankAll() {
+      hotrankApis.forEach(({type, card}) => {
+        const cardElem = document.querySelectorAll('.hotrank-card')[card];
+        const listElem = cardElem.querySelector('.hotrank-list');
+        listElem.innerHTML = '<div style="color:#888;text-align:center;padding:12px 0;">加载中...</div>';
+        fetch(`https://api.vvhan.com/api/hotlist?type=${type}`)
+          .then(res => res.json())
+          .then(data => {
+            if(data && data.success && data.data && data.data.length > 0) {
+              listElem.innerHTML = '';
+              data.data.slice(0,10).forEach(item => {
+                const a = document.createElement('a');
+                a.className = 'hotrank-list-item';
+                a.href = item.url;
+                a.target = '_blank';
+                a.title = item.title;
+                a.style.display = 'block';
+                a.style.background = '#353535';
+                a.style.borderRadius = '8px';
+                a.style.height = 'auto';
+                a.style.opacity = '1';
+                a.style.color = '#fff';
+                a.style.padding = '7px 12px';
+                a.style.marginBottom = '0';
+                a.style.textDecoration = 'none';
+                a.style.fontSize = '1rem';
+                a.style.overflow = 'hidden';
+                a.style.textOverflow = 'ellipsis';
+                a.style.whiteSpace = 'nowrap';
+                a.innerHTML = item.title;
+                listElem.appendChild(a);
+              });
+            } else {
+              listElem.innerHTML = '<div style="color:#888;text-align:center;padding:12px 0;">暂无数据</div>';
+            }
+          })
+          .catch(() => {
+            listElem.innerHTML = '<div style="color:#888;text-align:center;padding:12px 0;">获取失败</div>';
+          });
+      });
+    }
+    // 动态渲染tags
+    function renderTags() {
+      const tags = window.siteConfig.tags;
+      const tagsDiv = document.getElementById('tags');
+      tagsDiv.innerHTML = '';
+      tags.forEach(tag => {
+        if(tag.url) {
+          const a = document.createElement('a');
+          a.className = 'tag';
+          a.href = tag.url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = tag.name;
+          tagsDiv.appendChild(a);
+        } else {
+          const div = document.createElement('div');
+          div.className = 'tag';
+          div.textContent = tag.name;
+          tagsDiv.appendChild(div);
+        }
+      });
+    }
+    renderTags();
+    // 动态渲染社交图标
+    function renderSocialIcons() {
+      const icons = window.siteConfig.socialLinks;
+      const iconsDiv = document.getElementById('socialIcons');
+      iconsDiv.innerHTML = '';
+      icons.forEach(link => {
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.title = link.icon === 'bilibili' ? 'bilibili' : link.icon.replace('fa-', '');
+        if(link.icon === 'bilibili') {
+          a.innerHTML = `<svg viewBox="0 0 1024 1024" width="24" height="24" style="vertical-align:middle"><path fill="#fff" d="M256 192l-64-96a32 32 0 1153-36l87 130 87-130a32 32 0 1153 36l-64 96h256a96 96 0 0196 96v448a96 96 0 01-96 96H256a96 96 0 01-96-96V288a96 96 0 0196-96zm0 64a32 32 0 00-32 32v448a32 32 0 0032 32h512a32 32 0 0032-32V288a32 32 0 00-32-32H256zm96 160a32 32 0 110 64 32 32 0 010-64zm320 0a32 32 0 110 64 32 32 0 010-64z"/></svg>`;
+        } else {
+          a.innerHTML = `<i class="fa ${link.icon}"></i>`;
+        }
+        iconsDiv.appendChild(a);
+      });
+    }
+    renderSocialIcons();
+    // 背景视差效果
+    const bg = document.querySelector('.background');
+    document.addEventListener('mousemove', function(e) {
+      const x = (e.clientX / window.innerWidth - 0.5) * 30;
+      const y = (e.clientY / window.innerHeight - 0.5) * 30;
+      bg.style.transform = `translate3d(${x}px,${y}px,0) scale(1.05)`;
+    });
+    bg.style.transition = 'transform 0.4s cubic-bezier(.77,0,.18,1)';
+  </script>
+</body>
+</html> 
