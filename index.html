@@ -509,17 +509,21 @@
     const mainContent = document.getElementById('main-content');
     const hotrankBackBtn = document.getElementById('hotrankBackBtn');
     // 标签点击事件
-    Array.from(document.getElementsByClassName('tag')).forEach(tag => {
-      if(tag.textContent.includes('热点汇总')){
-        tag.style.cursor = 'pointer';
-        tag.onclick = function(){
-          mainContent.style.display = 'none';
-          hotrankPage.style.display = 'block';
-          updateHotrankDate();
-          loadHotrankAll();
-        };
-      }
-    });
+    renderTags();
+    function bindHotrankTagEvent() {
+      Array.from(document.getElementsByClassName('tag')).forEach(tag => {
+        if(tag.textContent.includes('热点汇总')){
+          tag.style.cursor = 'pointer';
+          tag.onclick = function(){
+            mainContent.style.display = 'none';
+            hotrankPage.style.display = 'block';
+            updateHotrankDate();
+            loadHotrankAll();
+          };
+        }
+      });
+    }
+    bindHotrankTagEvent();
     // 返回按钮
     hotrankBackBtn.onclick = function(){
       hotrankPage.style.display = 'none';
@@ -615,7 +619,6 @@
         }
       });
     }
-    renderTags();
     // 动态渲染社交图标
     function renderSocialIcons() {
       const icons = window.siteConfig.socialLinks;
